@@ -1,10 +1,12 @@
 let rows;
 let cols;
 let currentState;
-let cellSize = 10;
+let cellSize = 50;
 let simRunning;
 let simInterval;
-let simSpeed = 5;
+let simSpeed = 1;
+let width = 0;
+let height = 0;
 
 function initializeState() {
   let state = new Array(rows);
@@ -19,28 +21,28 @@ function initializeState() {
   return state;
 }
 
-function drawGrid(canvas, ctx) {
+function drawGrid(ctx) {
   ctx.fillStyle = "black";
-  ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-  ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillRect(0, 0, width, height);
 
   ctx.beginPath();
 
-  for (let i = 1; i < rows; i++) {
-    ctx.moveTo(i * cellSize, 0);
-    ctx.lineTo(i * cellSize, 800);
-  }
   for (let i = 1; i < cols; i++) {
+    ctx.moveTo(i * cellSize, 0);
+    ctx.lineTo(i * cellSize, height);
+  }
+  for (let i = 1; i < rows; i++) {
     ctx.moveTo(0, i * cellSize);
-    ctx.lineTo(800, i * cellSize);
+    ctx.lineTo(width, i * cellSize);
   }
 
-  ctx.strokeStyle = "red";
+  ctx.strokeStyle = "white";
   ctx.stroke();
 }
 
-function getMousePos(canvas, e) {
-  let rect = canvas.getBoundingClientRect();
+function getMousePos(ctx, e) {
+  let rect = ctx.canvas.getBoundingClientRect();
 
   let x = Math.floor(e.clientX - rect.left);
   let y = Math.floor(e.clientY - rect.top);
@@ -51,22 +53,22 @@ function getMousePos(canvas, e) {
   return [x, y];
 }
 
-function drawCell(canvas, ctx, e) {
+function drawCell(ctx, e) {
   if (!simRunning) {
-    let [x, y] = getMousePos(canvas, e);
+    let [x, y] = getMousePos(ctx, e);
 
     currentState[y / cellSize][x / cellSize] =
       currentState[y / cellSize][x / cellSize] == 1 ? 0 : 1;
-    drawState(ctx, currentState, canvas);
+    drawState(ctx, currentState);
   }
 }
 
-function drawState(ctx, state, canvas) {
-  drawGrid(canvas, ctx);
-  ctx.fillStyle = "yellow";
+function drawState(ctx, state) {
+  drawGrid(ctx);
+  ctx.fillStyle = "#f0c";
 
-  for (let i = 0; i < state.length; i++) {
-    for (let j = 0; j < state.length; j++) {
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
       if (state[i][j] == 1) {
         ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
       }
@@ -86,14 +88,10 @@ function countNeighbors(state, x, y) {
   return sum;
 }
 
-function simulate(state, canvas, ctx) {
-  drawGrid(canvas, ctx);
+function simulate(state, ctx) {
+  drawGrid(ctx);
 
-  let newState = initializeState(
-    cellSize,
-    canvas.clientWidth,
-    canvas.clientHeight,
-  );
+  let newState = initializeState(cellSize);
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
@@ -117,14 +115,16 @@ function simulate(state, canvas, ctx) {
   return newState;
 }
 
-function startSimulation(canvas, ctx) {
-  simRunning = true;
+function startSimulation(ctx) {
+  if (!simRunning) {
+    simRunning = true;
 
-  simInterval = setInterval(() => {
-    currentState = simulate(currentState, canvas, ctx);
-    drawGrid(canvas, ctx);
-    drawState(ctx, currentState, canvas);
-  }, simSpeed);
+    simInterval = setInterval(() => {
+      currentState = simulate(currentState, ctx);
+      drawGrid(ctx);
+      drawState(ctx, currentState);
+    }, simSpeed);
+  }
 }
 
 function stopSimulation() {
@@ -132,32 +132,64 @@ function stopSimulation() {
   simRunning = false;
 }
 
+function resizeCanvasToDisplaySize(canvas) {
+  // look up the size the canvas is being displayed
+  width = canvas.clientWidth;
+  height = canvas.clientHeight;
+
+  width = width - (width % cellSize);
+  height = height - (height % cellSize);
+  console.log(width, height);
+
+  // If it's resolution does not match change it
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+    return true;
+  }
+
+  return false;
+}
+
+function generateRandomState() {
+  let randomState = initializeState();
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      randomState[i][j] = Math.floor(Math.random() + 0.2);
+    }
+  }
+
+  return randomState;
+}
+
 function startGame() {
   // Get the canvas element
   const canvas = document.getElementById("gameCanvas");
-
   const ctx = canvas.getContext("2d");
+  resizeCanvasToDisplaySize(ctx.canvas);
 
-  rows = canvas.clientHeight / cellSize;
-  cols = canvas.clientWidth / cellSize;
+  rows = height / cellSize;
+  cols = width / cellSize;
 
-  drawGrid(canvas, ctx);
+  drawGrid(ctx);
 
-  currentState = initializeState(
-    cellSize,
-    canvas.clientWidth,
-    canvas.clientHeight,
-  );
+  currentState = initializeState(cellSize);
 
   canvas.addEventListener("mousedown", (e) => {
-    drawCell(canvas, ctx, e);
+    drawCell(ctx, e);
   });
 
-  document.getElementById("start").addEventListener("click", (e) => {
-    startSimulation(canvas, ctx);
+  document.getElementById("start").addEventListener("click", () => {
+    startSimulation(ctx);
   });
-  document.getElementById("stop").addEventListener("click", (e) => {
+  document.getElementById("stop").addEventListener("click", () => {
     stopSimulation();
+  });
+
+  document.getElementById("random").addEventListener("click", () => {
+    currentState = generateRandomState();
+    drawState(ctx, currentState);
   });
 }
 
