@@ -4,14 +4,25 @@
       <meta> 
     <title>Conway's Game Of Life</title>
     <link rel="stylesheet" href="./style.css">
-  </head>  
-  <body>
-    <h1>Conway's Game Of Life</h1>
-    <button id="start"> Start </button>
-    <button id="stop"> Stop </button>
-    <button id="random"> Random </button>
-    <canvas id="gameCanvas" ></canvas>
+</head>  
+<body>
+    <header>
+      <h1>Conway's Game Of Life</h1>
+        <div id="buttons"> 
+          <button id="start"> Start </button>
+          <button id="stop"> Stop </button>
+          <button id="random"> Random </button> 
+          <button id="reset"> Reset </button> 
+        </div> 
+      </header>
+    <div id="game"> 
+      <canvas id="gameCanvas" ></canvas>
+
+      <div id="controls">
+        <button id="next"> > </button> 
+      </div>
+    </div>
 <script src="./game.js"></script
-  </body>
+</body>
 
 </html>
