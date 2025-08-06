@@ -9,67 +9,67 @@ ifndef verbose
 endif
 
 ifeq ($(config),debug_x64)
-  raylib_quickstart_config = debug_x64
+  Conways_config = debug_x64
   raylib_config = debug_x64
 
 else ifeq ($(config),debug_x86)
-  raylib_quickstart_config = debug_x86
+  Conways_config = debug_x86
   raylib_config = debug_x86
 
 else ifeq ($(config),debug_arm64)
-  raylib_quickstart_config = debug_arm64
+  Conways_config = debug_arm64
   raylib_config = debug_arm64
 
 else ifeq ($(config),release_x64)
-  raylib_quickstart_config = release_x64
+  Conways_config = release_x64
   raylib_config = release_x64
 
 else ifeq ($(config),release_x86)
-  raylib_quickstart_config = release_x86
+  Conways_config = release_x86
   raylib_config = release_x86
 
 else ifeq ($(config),release_arm64)
-  raylib_quickstart_config = release_arm64
+  Conways_config = release_arm64
   raylib_config = release_arm64
 
 else ifeq ($(config),debug_rgfw_x64)
-  raylib_quickstart_config = debug_rgfw_x64
+  Conways_config = debug_rgfw_x64
   raylib_config = debug_rgfw_x64
 
 else ifeq ($(config),debug_rgfw_x86)
-  raylib_quickstart_config = debug_rgfw_x86
+  Conways_config = debug_rgfw_x86
   raylib_config = debug_rgfw_x86
 
 else ifeq ($(config),debug_rgfw_arm64)
-  raylib_quickstart_config = debug_rgfw_arm64
+  Conways_config = debug_rgfw_arm64
   raylib_config = debug_rgfw_arm64
 
 else ifeq ($(config),release_rgfw_x64)
-  raylib_quickstart_config = release_rgfw_x64
+  Conways_config = release_rgfw_x64
   raylib_config = release_rgfw_x64
 
 else ifeq ($(config),release_rgfw_x86)
-  raylib_quickstart_config = release_rgfw_x86
+  Conways_config = release_rgfw_x86
   raylib_config = release_rgfw_x86
 
 else ifeq ($(config),release_rgfw_arm64)
-  raylib_quickstart_config = release_rgfw_arm64
+  Conways_config = release_rgfw_arm64
   raylib_config = release_rgfw_arm64
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := raylib-quickstart raylib
+PROJECTS := Conways raylib
 
 .PHONY: all clean help $(PROJECTS) 
 
 all: $(PROJECTS)
 
-raylib-quickstart: raylib
-ifneq (,$(raylib_quickstart_config))
-	@echo "==== Building raylib-quickstart ($(raylib_quickstart_config)) ===="
-	@${MAKE} --no-print-directory -C build/build_files -f raylib-quickstart.make config=$(raylib_quickstart_config)
+Conways: raylib
+ifneq (,$(Conways_config))
+	@echo "==== Building Conways ($(Conways_config)) ===="
+	@${MAKE} --no-print-directory -C build/build_files -f Conways.make config=$(Conways_config)
 endif
 
 raylib:
@@ -79,7 +79,7 @@ ifneq (,$(raylib_config))
 endif
 
 clean:
-	@${MAKE} --no-print-directory -C build/build_files -f raylib-quickstart.make clean
+	@${MAKE} --no-print-directory -C build/build_files -f Conways.make clean
 	@${MAKE} --no-print-directory -C build/build_files -f raylib.make clean
 
 help:
@@ -102,7 +102,7 @@ help:
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
-	@echo "   raylib-quickstart"
+	@echo "   Conways"
 	@echo "   raylib"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"
